@@ -809,6 +809,7 @@
       burstConfetti();
 
       autoHideTimer = setTimeout(() => {
+        resultBadge.classList.remove('show');
         resultBadge.classList.add('hide');
       }, 3800);
     }, 4300);
