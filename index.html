@@ -60,14 +60,25 @@
 
   /* ---- Nav bar ---- */
   nav{
-    width: 100%;
-    display:flex;
-    align-items:center;
-    justify-content: space-between;
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
     padding: 18px clamp(20px, 6vw, 60px);
     background: rgba(255, 248, 240, 0.85);
     backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--line);
+    box-sizing: border-box;
+  }
+
+  .nav-inner{
+    max-width: 1100px;
+    margin: 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    row-gap: 10px;
   }
 
   .brand{
@@ -88,8 +99,35 @@
   .nav-links{
     display:flex;
     gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
     list-style: none;
   }
+
+  .nav-toggle{
+    display: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .nav-toggle span{
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: var(--ink);
+    border-radius: 2px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  .nav-toggle.open span:nth-child(1){ transform: translateY(6px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2){ opacity: 0; }
+  .nav-toggle.open span:nth-child(3){ transform: translateY(-6px) rotate(-45deg); }
 
   .nav-links a{
     display:inline-block;
@@ -143,10 +181,10 @@
   h1{
     font-family: 'Fraunces', serif;
     font-weight: 900;
-    font-size: clamp(36px, 8vw, 56px);
+    font-size: clamp(32px, 8vw, 56px);
     letter-spacing: -1px;
     margin-bottom: 12px;
-    line-height: 1.05;
+    line-height: 1.1;
   }
   h1 em{
     font-style: normal;
@@ -162,6 +200,7 @@
     max-width: 480px;
     margin: 0 auto;
     line-height: 1.55;
+    padding: 0 8px;
   }
 
   /* ---- Tool grid ---- */
@@ -250,9 +289,34 @@
     color: var(--mute);
     font-size: 12.5px;
     padding-bottom: 36px;
+    text-align: center;
+    padding-left: 20px;
+    padding-right: 20px;
   }
 
-  @media (max-width: 480px){
+  @media (max-width: 600px){
+    .nav-inner{ justify-content: space-between; flex-wrap: wrap; }
+    .nav-toggle{ display: flex; }
+    .nav-links{
+      display: none;
+      width: 100%;
+      order: 3;
+      justify-content: stretch;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .nav-links.open{ display: flex; }
+    .nav-links a{ text-align: center; }
+    .hero{ padding: 44px 16px 8px; }
+    .eyebrow{ font-size: 11px; padding: 5px 12px; letter-spacing: 2px; }
+    .hero p{ font-size: 14px; }
+    .tools{ padding: 36px 0 64px; }
+    .card{ padding: 24px 20px; }
+  }
+
+  @media (max-width: 380px){
+    .brand{ font-size: 17px; }
     .nav-links a{ padding: 7px 12px; font-size: 13px; }
   }
 </style>
@@ -260,11 +324,16 @@
 <body>
 
   <nav>
-    <div class="brand">🥢 My <em>Little Tools</em></div>
-    <ul class="nav-links">
-      <li><a href="index.html" class="active">Home</a></li>
-      <li><a href="meals-spinner.html">Meals Spinner</a></li>
-    </ul>
+    <div class="nav-inner">
+      <div class="brand">🥢 My <em>Little Tools</em></div>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="meals-spinner.html">Meals Spinner</a></li>
+      </ul>
+    </div>
   </nav>
 
   <div class="hero">
@@ -288,6 +357,16 @@
   </div>
 
   <footer>Built with Cursor · Deployed on Vercel</footer>
+
+<script>
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  navToggle.addEventListener('click', () => {
+    const isOpen = navLinks.classList.toggle('open');
+    navToggle.classList.toggle('open', isOpen);
+    navToggle.setAttribute('aria-expanded', isOpen);
+  });
+</script>
 
 </body>
 </html>
