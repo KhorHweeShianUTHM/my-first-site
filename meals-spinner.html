@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>今天吃什么 · 转盘</title>
+<title>What's for Dinner · Spinner</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;900&family=Zhi+Mang+Xing&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;900&family=Caveat:wght@600&family=Inter:wght@400;500;700&display=swap');
 
   :root{
     --bg: #1c1815;
@@ -23,7 +23,7 @@
   html, body{
     background: var(--bg);
     color: var(--cream);
-    font-family: 'Noto Sans SC', sans-serif;
+    font-family: 'Inter', sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
   }
@@ -51,7 +51,7 @@
   }
 
   .eyebrow{
-    font-family: 'Zhi Mang Xing', cursive;
+    font-family: 'Caveat', cursive;
     color: var(--amber);
     font-size: 22px;
     letter-spacing: 2px;
@@ -61,7 +61,7 @@
   }
 
   h1{
-    font-family: 'Noto Serif SC', serif;
+    font-family: 'Playfair Display', serif;
     font-weight: 900;
     font-size: clamp(32px, 8vw, 48px);
     letter-spacing: 4px;
@@ -147,7 +147,7 @@
 
   .wheel-label span{
     display: inline-block;
-    font-family: 'Noto Serif SC', serif;
+    font-family: 'Playfair Display', serif;
     font-weight: 700;
     font-size: 15px;
     color: var(--cream);
@@ -175,7 +175,7 @@
 
   .spin-btn{
     z-index: 1;
-    font-family: 'Noto Serif SC', serif;
+    font-family: 'Playfair Display', serif;
     font-weight: 700;
     font-size: 18px;
     letter-spacing: 3px;
@@ -204,7 +204,7 @@
   .ticket{
     background: var(--cream);
     color: var(--bg);
-    font-family: 'Noto Serif SC', serif;
+    font-family: 'Playfair Display', serif;
     font-weight: 900;
     font-size: 22px;
     padding: 14px 28px;
@@ -238,7 +238,7 @@
     padding: 18px 20px 20px;
   }
   .editor h2{
-    font-family: 'Noto Serif SC', serif;
+    font-family: 'Playfair Display', serif;
     font-size: 15px;
     color: var(--amber);
     letter-spacing: 2px;
@@ -305,9 +305,9 @@
 </head>
 <body>
 
-  <div class="eyebrow">深夜食堂 · 选择困难症终结者</div>
-  <h1>今天吃什么</h1>
-  <div class="sub">转一下,交给命运决定</div>
+  <div class="eyebrow">Midnight Diner · End Your Indecision</div>
+  <h1>What's for Dinner</h1>
+  <div class="sub">Give the wheel a spin, let fate decide</div>
 
   <div class="stage">
     <div class="pointer"></div>
@@ -317,25 +317,25 @@
     <div class="hub">🥢</div>
   </div>
 
-  <button class="spin-btn" id="spinBtn">转 起 来</button>
+  <button class="spin-btn" id="spinBtn">S P I N</button>
 
   <div class="result">
     <div class="ticket" id="ticket"></div>
   </div>
 
   <div class="editor">
-    <h2>菜单 · 点击 × 可删除</h2>
+    <h2>Menu · Tap × to remove</h2>
     <div class="items" id="itemsList"></div>
     <div class="add-row">
-      <input type="text" id="newItem" placeholder="加一个菜,比如 麻辣烫" maxlength="12">
-      <button id="addBtn">添加</button>
+      <input type="text" id="newItem" placeholder="Add a dish, e.g. Ramen" maxlength="20">
+      <button id="addBtn">Add</button>
     </div>
   </div>
 
 <script>
   const palette = ['#c1443d', '#e8a33d', '#3d6e67', '#8a5a3d', '#a6713d', '#5c4a3d', '#b5622f', '#4d6b5c'];
 
-  let foods = ['火锅', '烤肉', '兰州拉面', '沙县小吃', '螺蛳粉', '寿司', '黄焖鸡米饭', '麻辣香锅'];
+  let foods = ['Hot Pot', 'BBQ', 'Ramen', 'Pizza', 'Sushi', 'Tacos', 'Fried Rice', 'Curry'];
 
   const wheel = document.getElementById('wheel');
   const spinBtn = document.getElementById('spinBtn');
@@ -401,7 +401,7 @@
     if(!val) return;
     if(foods.length >= 16){
       newItemInput.value = '';
-      newItemInput.placeholder = '最多16个,删几个再加吧';
+      newItemInput.placeholder = 'Max 16 — remove one to add more';
       return;
     }
     foods.push(val);
@@ -446,7 +446,7 @@
     setTimeout(() => {
       spinning = false;
       spinBtn.disabled = false;
-      ticket.textContent = `就吃 ${foods[winnerIndex]} 🎉`;
+      ticket.textContent = `It's ${foods[winnerIndex]} tonight 🎉`;
       ticket.classList.add('show');
     }, 4300);
   });
