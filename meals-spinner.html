@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>What's for Dinner · Spinner</title>
+<title>PJ Budget Eats · Spinner</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,900&family=Outfit:wght@400;500;600;700&display=swap');
 
@@ -34,11 +34,10 @@
     display:flex;
     flex-direction:column;
     align-items:center;
-    padding: 40px 20px 72px;
+    padding: 0 20px 72px;
     position: relative;
   }
 
-  /* decorative background blobs */
   body::before,
   body::after{
     content:'';
@@ -60,6 +59,66 @@
 
   body > *{ position: relative; z-index: 1; }
 
+  nav{
+    width: 100%;
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    padding: 18px clamp(20px, 6vw, 60px);
+    background: rgba(255, 248, 240, 0.85);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 32px;
+  }
+
+  .brand{
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 20px;
+    letter-spacing: -0.5px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .brand em{
+    font-style: normal;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .nav-links{
+    display:flex;
+    gap: 8px;
+    list-style: none;
+  }
+
+  .nav-links a{
+    display:inline-block;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+  }
+
+  .nav-links a:hover{
+    background: var(--accent);
+    color: var(--paper);
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  .nav-links a.active{
+    background: var(--cream);
+    border-color: var(--gold);
+    color: var(--accent-dark);
+  }
+
   .eyebrow{
     display: inline-flex;
     align-items: center;
@@ -80,7 +139,7 @@
   h1{
     font-family: 'Fraunces', serif;
     font-weight: 900;
-    font-size: clamp(36px, 9vw, 56px);
+    font-size: clamp(32px, 8vw, 52px);
     letter-spacing: -1px;
     color: var(--ink);
     margin-bottom: 10px;
@@ -98,10 +157,24 @@
   .sub{
     color: var(--mute);
     font-size: 15px;
-    margin-bottom: 40px;
+    margin-bottom: 10px;
     text-align: center;
-    max-width: 320px;
+    max-width: 360px;
     line-height: 1.5;
+  }
+
+  .budget-badge{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent-dark);
+    background: var(--paper);
+    border: 2px solid var(--gold);
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 36px;
   }
 
   /* ---- Turntable ---- */
@@ -172,20 +245,33 @@
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    padding-top: 18%;
+    padding-top: 16%;
     pointer-events: none;
   }
 
-  .wheel-label span{
-    display: inline-block;
+  .wheel-label .label-inner{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 68px;
+  }
+
+  .wheel-label .name{
     font-family: 'Outfit', sans-serif;
     font-weight: 700;
-    font-size: clamp(9px, 2.4vw, 11px);
-    line-height: 1.2;
-    text-align: center;
-    max-width: 72px;
+    font-size: clamp(8px, 2.2vw, 10px);
+    line-height: 1.15;
     word-break: break-word;
-    hyphens: auto;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  }
+
+  .wheel-label .price{
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: clamp(7px, 1.8vw, 9px);
+    margin-top: 2px;
+    opacity: 0.9;
     text-shadow: 0 1px 2px rgba(0,0,0,0.15);
   }
 
@@ -242,10 +328,9 @@
     box-shadow: 0 4px 0 var(--accent-dark);
   }
 
-  /* result ticket */
   .result{
     margin-top: 28px;
-    min-height: 72px;
+    min-height: 80px;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -255,8 +340,8 @@
     color: var(--ink);
     font-family: 'Fraunces', serif;
     font-weight: 900;
-    font-size: clamp(18px, 4.5vw, 24px);
-    padding: 16px 32px;
+    font-size: clamp(17px, 4.2vw, 22px);
+    padding: 16px 36px;
     border: 2px dashed var(--accent);
     border-radius: 12px;
     position: relative;
@@ -264,23 +349,22 @@
     transform: translateY(12px) scale(0.92);
     transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
     box-shadow: 0 8px 24px var(--shadow);
+    text-align: center;
+    line-height: 1.35;
   }
   .ticket.show{ opacity: 1; transform: translateY(0) scale(1); }
-  .ticket::before, .ticket::after{
-    content:'🍽';
-    position:absolute;
-    top:50%;
-    transform: translateY(-50%);
-    font-size: 16px;
-    opacity: 0.7;
+  .ticket .price-line{
+    display: block;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-top: 4px;
   }
-  .ticket::before{ left: 10px; }
-  .ticket::after{ right: 10px; }
 
-  /* editable list */
   .editor{
     margin-top: 48px;
-    width: min(440px, 92vw);
+    width: min(480px, 92vw);
     background: var(--paper);
     border: 1px solid var(--line);
     border-radius: 20px;
@@ -328,6 +412,11 @@
     border-color: var(--gold);
     transform: translateY(-1px);
   }
+  .chip .chip-price{
+    font-weight: 700;
+    color: var(--accent-dark);
+    font-size: 12px;
+  }
   .chip button{
     background: var(--paper);
     border: 1px solid var(--line);
@@ -351,9 +440,9 @@
   .add-row{
     display:flex;
     gap: 10px;
+    flex-wrap: wrap;
   }
   .add-row input{
-    flex:1;
     background: var(--bg);
     border: 1px solid var(--line);
     border-radius: 12px;
@@ -363,6 +452,8 @@
     font-family: inherit;
     transition: border-color 0.15s, box-shadow 0.15s;
   }
+  .add-row input[name]{ flex: 2; min-width: 140px; }
+  .add-row input[price]{ flex: 0 0 72px; text-align: center; }
   .add-row input::placeholder{ color: #c4a882; }
   .add-row input:focus{
     outline: none;
@@ -393,9 +484,18 @@
 </head>
 <body>
 
-  <div class="eyebrow">End Your Indecision</div>
+  <nav>
+    <a class="brand" href="index.html">🥢 My <em>Little Tools</em></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="meals-spinner.html" class="active">Meals Spinner</a></li>
+    </ul>
+  </nav>
+
+  <div class="eyebrow">Petaling Jaya · Budget Eats</div>
   <h1>What's for <em>Dinner</em></h1>
-  <div class="sub">Give the wheel a spin — let fate pick your next hawker feast</div>
+  <div class="sub">Spin for cheap &amp; good PJ hawker food — mamak, kopitiam &amp; food court picks</div>
+  <div class="budget-badge">💰 RM0 – RM15 only</div>
 
   <div class="stage">
     <div class="pointer"></div>
@@ -412,16 +512,16 @@
   </div>
 
   <div class="editor">
-    <h2>Menu · Tap × to remove</h2>
+    <h2>PJ Menu · Tap × to remove</h2>
     <div class="items" id="itemsList"></div>
     <div class="add-row">
-      <input type="text" id="newItem" placeholder="Add a dish, e.g. Loh Mee" maxlength="20">
+      <input type="text" id="newItem" placeholder="Dish name" maxlength="22">
+      <input type="number" id="newPrice" placeholder="RM" min="0" max="15" step="0.5">
       <button id="addBtn">Add</button>
     </div>
   </div>
 
 <script>
-  // warm food-night-market slice colors
   const palette = [
     '#e85d04', '#f4a261', '#2a9d8f', '#e9c46a',
     '#264653', '#e76f51', '#606c38', '#bc6c25',
@@ -429,17 +529,38 @@
     '#fb8500', '#219ebc', '#588157', '#bc4749'
   ];
 
-  let foods = ['Char Kway Teow', 'Hokkien Mee', 'Bak Kut Teh', 'Wantan Mee', 'Hainanese Chicken Rice', 'Claypot Rice', 'Yong Tau Foo', 'Fish Head Noodles'];
+  const MAX_PRICE = 15;
+
+  // PJ hawker & kopitiam picks — typical RM0–RM15 range
+  let foods = [
+    { name: 'Nasi Lemak', price: 4, spot: 'SS2' },
+    { name: 'Roti Canai', price: 2.5, spot: 'Sea Park' },
+    { name: 'Pan Mee', price: 8, spot: 'Damansara Uptown' },
+    { name: 'Wantan Mee', price: 7, spot: 'Old Town PJ' },
+    { name: 'Yong Tau Foo', price: 10, spot: 'Taman Bahagia' },
+    { name: 'Curry Laksa', price: 8, spot: 'SS4' },
+    { name: 'Economy Rice', price: 6, spot: 'Section 14' },
+    { name: 'Mee Goreng Mamak', price: 7, spot: 'SS15' },
+    { name: 'Popiah', price: 4, spot: 'SS2 Pasar Malam' },
+    { name: 'Chee Cheong Fun', price: 5, spot: 'Kota Damansara' },
+    { name: 'Char Kuey Teow', price: 9, spot: 'SS3' },
+    { name: 'Rojak', price: 6, spot: 'Section 17' }
+  ];
 
   const wheel = document.getElementById('wheel');
   const spinBtn = document.getElementById('spinBtn');
   const ticket = document.getElementById('ticket');
   const itemsList = document.getElementById('itemsList');
   const newItemInput = document.getElementById('newItem');
+  const newPriceInput = document.getElementById('newPrice');
   const addBtn = document.getElementById('addBtn');
 
   let currentRotation = 0;
   let spinning = false;
+
+  function formatPrice(n){
+    return Number.isInteger(n) ? `RM${n}` : `RM${n.toFixed(1)}`;
+  }
 
   function textColorForBg(hex){
     const r = parseInt(hex.slice(1,3), 16);
@@ -471,13 +592,27 @@
       labelWrap.className = 'wheel-label';
       const angle = slice * i + slice / 2;
       labelWrap.style.transform = `rotate(${angle}deg)`;
-      const span = document.createElement('span');
-      span.textContent = food;
-      // counter-rotate so labels read upright within each slice
-      span.style.transform = `rotate(${-angle}deg)`;
+
+      const inner = document.createElement('div');
+      inner.className = 'label-inner';
+      inner.style.transform = `rotate(${-angle}deg)`;
+
+      const nameEl = document.createElement('span');
+      nameEl.className = 'name';
+      nameEl.textContent = food.name;
+
+      const priceEl = document.createElement('span');
+      priceEl.className = 'price';
+      priceEl.textContent = formatPrice(food.price);
+
       const sliceColor = palette[i % palette.length];
-      span.style.color = textColorForBg(sliceColor);
-      labelWrap.appendChild(span);
+      const textColor = textColorForBg(sliceColor);
+      nameEl.style.color = textColor;
+      priceEl.style.color = textColor;
+
+      inner.appendChild(nameEl);
+      inner.appendChild(priceEl);
+      labelWrap.appendChild(inner);
       wheel.appendChild(labelWrap);
     });
   }
@@ -492,7 +627,10 @@
       dot.style.color = palette[i % palette.length];
       dot.style.fontSize = '8px';
       const label = document.createElement('span');
-      label.textContent = food;
+      label.textContent = food.name;
+      const priceTag = document.createElement('span');
+      priceTag.className = 'chip-price';
+      priceTag.textContent = formatPrice(food.price);
       const removeBtn = document.createElement('button');
       removeBtn.textContent = '×';
       removeBtn.onclick = () => {
@@ -502,21 +640,29 @@
       };
       chip.appendChild(dot);
       chip.appendChild(label);
+      chip.appendChild(priceTag);
       chip.appendChild(removeBtn);
       itemsList.appendChild(chip);
     });
   }
 
   function addFood(){
-    const val = newItemInput.value.trim();
-    if(!val) return;
+    const name = newItemInput.value.trim();
+    const priceVal = parseFloat(newPriceInput.value);
+    if(!name) return;
+    if(Number.isNaN(priceVal) || priceVal < 0 || priceVal > MAX_PRICE){
+      newPriceInput.focus();
+      newPriceInput.placeholder = `0–${MAX_PRICE}`;
+      return;
+    }
     if(foods.length >= 16){
       newItemInput.value = '';
       newItemInput.placeholder = 'Max 16 — remove one to add more';
       return;
     }
-    foods.push(val);
+    foods.push({ name, price: priceVal });
     newItemInput.value = '';
+    newPriceInput.value = '';
     renderWheel();
     renderItemsList();
   }
@@ -525,17 +671,22 @@
   newItemInput.addEventListener('keydown', (e) => {
     if(e.key === 'Enter') addFood();
   });
+  newPriceInput.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') addFood();
+  });
 
   spinBtn.addEventListener('click', () => {
     if(spinning || foods.length === 0) return;
     spinning = true;
     spinBtn.disabled = true;
     ticket.classList.remove('show');
+    ticket.innerHTML = '';
 
     const n = foods.length;
     const slice = 360 / n;
 
     const winnerIndex = Math.floor(Math.random() * n);
+    const winner = foods[winnerIndex];
     const sliceCenter = winnerIndex * slice + slice / 2;
 
     const extraSpins = 5 + Math.floor(Math.random() * 3);
@@ -551,7 +702,7 @@
     setTimeout(() => {
       spinning = false;
       spinBtn.disabled = false;
-      ticket.textContent = `It's ${foods[winnerIndex]} tonight!`;
+      ticket.innerHTML = `It's ${winner.name} tonight!<span class="price-line">${formatPrice(winner.price)} · PJ</span>`;
       ticket.classList.add('show');
     }, 4300);
   });

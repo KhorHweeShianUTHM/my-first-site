@@ -5,14 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Little Tools</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@600;900&family=Inter:wght@400;500;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,900&family=Outfit:wght@400;500;600;700&display=swap');
 
   :root{
-    --bg: #ffffff;
-    --ink: #111111;
-    --paper: #f4f4f4;
-    --line: #d9d9d9;
-    --mute: #6b6b6b;
+    --bg: #fff8f0;
+    --ink: #2c1810;
+    --paper: #ffffff;
+    --line: #e8d5c4;
+    --mute: #8b6914;
+    --accent: #e85d04;
+    --accent-dark: #c44d00;
+    --gold: #f4a261;
+    --cream: #fef3e2;
+    --shadow: rgba(44, 24, 16, 0.12);
   }
 
   *{ box-sizing: border-box; margin:0; padding:0; }
@@ -20,15 +25,38 @@
   html, body{
     background: var(--bg);
     color: var(--ink);
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', sans-serif;
     min-height: 100vh;
+    overflow-x: hidden;
   }
 
   body{
     display:flex;
     flex-direction:column;
     align-items:center;
+    position: relative;
   }
+
+  body::before,
+  body::after{
+    content:'';
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::before{
+    width: 480px; height: 480px;
+    top: -140px; right: -120px;
+    background: radial-gradient(circle, rgba(244,162,97,0.35) 0%, transparent 70%);
+  }
+  body::after{
+    width: 400px; height: 400px;
+    bottom: -100px; left: -100px;
+    background: radial-gradient(circle, rgba(232,93,4,0.18) 0%, transparent 70%);
+  }
+
+  body > *{ position: relative; z-index: 1; }
 
   /* ---- Nav bar ---- */
   nav{
@@ -36,7 +64,9 @@
     display:flex;
     align-items:center;
     justify-content: space-between;
-    padding: 20px clamp(20px, 6vw, 60px);
+    padding: 18px clamp(20px, 6vw, 60px);
+    background: rgba(255, 248, 240, 0.85);
+    backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--line);
   }
 
@@ -46,6 +76,13 @@
     font-size: 20px;
     letter-spacing: -0.5px;
     color: var(--ink);
+  }
+  .brand em{
+    font-style: normal;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .nav-links{
@@ -59,17 +96,25 @@
     color: var(--ink);
     text-decoration: none;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     padding: 8px 16px;
     border-radius: 999px;
     border: 1px solid var(--line);
-    transition: background 0.2s ease, border-color 0.2s ease;
+    background: var(--paper);
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
   }
 
   .nav-links a:hover{
-    background: var(--ink);
-    color: var(--bg);
-    border-color: var(--ink);
+    background: var(--accent);
+    color: var(--paper);
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  .nav-links a.active{
+    background: var(--cream);
+    border-color: var(--gold);
+    color: var(--accent-dark);
   }
 
   /* ---- Hero ---- */
@@ -79,71 +124,97 @@
   }
 
   .eyebrow{
-    font-family: 'Inter', sans-serif;
-    color: var(--mute);
-    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
     letter-spacing: 3px;
     text-transform: uppercase;
-    margin-bottom: 10px;
+    color: var(--accent);
+    background: var(--cream);
+    border: 1px solid var(--line);
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 14px;
   }
+  .eyebrow::before{ content: '✦'; font-size: 10px; }
 
   h1{
     font-family: 'Fraunces', serif;
     font-weight: 900;
-    font-size: clamp(32px, 7vw, 52px);
+    font-size: clamp(36px, 8vw, 56px);
     letter-spacing: -1px;
     margin-bottom: 12px;
+    line-height: 1.05;
+  }
+  h1 em{
+    font-style: normal;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .hero p{
     color: var(--mute);
     font-size: 15px;
-    max-width: 460px;
+    max-width: 480px;
     margin: 0 auto;
+    line-height: 1.55;
   }
 
   /* ---- Tool grid ---- */
   .tools{
     width: min(880px, 92vw);
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
-    padding: 40px 0 80px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 22px;
+    padding: 44px 0 80px;
   }
 
   .card{
-    background: var(--bg);
+    background: var(--paper);
     border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 26px 24px;
+    border-radius: 20px;
+    padding: 28px 24px;
     text-decoration: none;
     color: var(--ink);
     display: flex;
     flex-direction: column;
     gap: 10px;
+    box-shadow: 0 12px 40px var(--shadow);
     transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
   .card:hover{
-    transform: translateY(-4px);
-    border-color: var(--ink);
-    box-shadow: 0 14px 30px rgba(0,0,0,0.1);
+    transform: translateY(-5px);
+    border-color: var(--gold);
+    box-shadow: 0 18px 48px rgba(232, 93, 4, 0.18);
   }
 
   .card .icon{
-    font-size: 28px;
+    font-size: 32px;
+    width: 56px; height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--cream);
+    border-radius: 14px;
+    border: 1px solid var(--line);
   }
 
   .card h3{
     font-family: 'Fraunces', serif;
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 22px;
+    font-weight: 900;
+    margin-top: 4px;
   }
 
   .card p{
     color: var(--mute);
-    font-size: 13.5px;
-    line-height: 1.5;
+    font-size: 14px;
+    line-height: 1.55;
   }
 
   .card .tag{
@@ -151,14 +222,14 @@
     font-size: 11px;
     letter-spacing: 1px;
     text-transform: uppercase;
-    color: var(--bg);
-    background: var(--ink);
-    padding: 3px 10px;
+    font-weight: 700;
+    color: var(--paper);
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+    padding: 5px 12px;
     border-radius: 999px;
-    margin-top: 4px;
+    margin-top: 6px;
   }
 
-  /* placeholder card for future tools */
   .card.placeholder{
     border-style: dashed;
     align-items: center;
@@ -166,6 +237,8 @@
     text-align: center;
     color: var(--mute);
     cursor: default;
+    box-shadow: none;
+    background: var(--cream);
   }
   .card.placeholder:hover{
     transform: none;
@@ -176,7 +249,7 @@
   footer{
     color: var(--mute);
     font-size: 12.5px;
-    padding-bottom: 32px;
+    padding-bottom: 36px;
   }
 
   @media (max-width: 480px){
@@ -187,25 +260,25 @@
 <body>
 
   <nav>
-    <div class="brand">🥢 My Little Tools</div>
+    <div class="brand">🥢 My <em>Little Tools</em></div>
     <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html" class="active">Home</a></li>
       <li><a href="meals-spinner.html">Meals Spinner</a></li>
     </ul>
   </nav>
 
   <div class="hero">
-    <div class="eyebrow">a small corner of the internet</div>
-    <h1>Fun Little Tools</h1>
-    <p>A growing collection of small, silly, useful things I've built for myself.</p>
+    <div class="eyebrow">A Small Corner of the Internet</div>
+    <h1>Fun <em>Little Tools</em></h1>
+    <p>A growing collection of small, silly, useful things I've built — starting with PJ budget eats under RM15.</p>
   </div>
 
   <div class="tools">
     <a class="card" href="meals-spinner.html">
       <div class="icon">🍜</div>
-      <h3>What's for Dinner</h3>
-      <p>Can't decide what to eat? Spin the wheel and let fate choose for you.</p>
-      <span class="tag">Random Picker</span>
+      <h3>PJ Budget Eats</h3>
+      <p>Can't decide what to eat in Petaling Jaya? Spin the wheel for hawker picks from RM0–RM15.</p>
+      <span class="tag">PJ · Under RM15</span>
     </a>
 
     <div class="card placeholder">
