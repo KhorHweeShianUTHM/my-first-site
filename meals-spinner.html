@@ -60,15 +60,26 @@
   body > *{ position: relative; z-index: 1; }
 
   nav{
-    width: 100%;
-    display:flex;
-    align-items:center;
-    justify-content: space-between;
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
     padding: 18px clamp(20px, 6vw, 60px);
     background: rgba(255, 248, 240, 0.85);
     backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--line);
     margin-bottom: 32px;
+    box-sizing: border-box;
+  }
+
+  .nav-inner{
+    max-width: 1100px;
+    margin: 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    row-gap: 10px;
   }
 
   .brand{
@@ -92,6 +103,31 @@
     gap: 8px;
     list-style: none;
   }
+
+  .nav-toggle{
+    display: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .nav-toggle span{
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: var(--ink);
+    border-radius: 2px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  .nav-toggle.open span:nth-child(1){ transform: translateY(6px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2){ opacity: 0; }
+  .nav-toggle.open span:nth-child(3){ transform: translateY(-6px) rotate(-45deg); }
 
   .nav-links a{
     display:inline-block;
@@ -166,7 +202,7 @@
   /* ---- Turntable ---- */
   .stage{
     position: relative;
-    width: min(360px, 88vw);
+    width: min(520px, 88vw, 46vh);
     aspect-ratio: 1/1;
     margin-bottom: 32px;
     filter: drop-shadow(0 24px 48px var(--shadow));
@@ -260,7 +296,10 @@
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    width: 68px; height: 68px;
+    width: 18%;
+    aspect-ratio: 1/1;
+    min-width: 52px;
+    max-width: 90px;
     border-radius: 50%;
     background: linear-gradient(145deg, #fff 0%, var(--cream) 100%);
     box-shadow:
@@ -271,7 +310,7 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size: 24px;
+    font-size: clamp(20px, 4.2vw, 30px);
     font-family: inherit;
     cursor: pointer;
     border: none;
@@ -460,7 +499,7 @@
     font-family: inherit;
     transition: border-color 0.15s, box-shadow 0.15s;
   }
-  .add-row input{ flex: 1; }
+  .add-row input{ flex: 1 1 180px; min-width: 0; }
   .add-row input::placeholder{ color: #c4a882; }
   .add-row input:focus{
     outline: none;
@@ -483,6 +522,31 @@
     transform: translateY(-1px);
   }
 
+  @media (max-width: 600px){
+    .nav-inner{ justify-content: space-between; flex-wrap: wrap; }
+    .nav-toggle{ display: flex; }
+    .nav-links{
+      display: none;
+      width: 100%;
+      order: 3;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .nav-links.open{ display: flex; }
+    .nav-links a{ text-align: center; }
+    .eyebrow{ font-size: 11px; padding: 5px 12px; letter-spacing: 2px; }
+    .sub{ font-size: 14px; padding: 0 4px; }
+    .editor{ padding: 18px 16px 20px; }
+    .add-row button{ flex: 1 1 100%; padding: 12px 20px; }
+  }
+
+  @media (max-width: 380px){
+    .brand{ font-size: 17px; }
+    .nav-links a{ padding: 7px 12px; font-size: 13px; }
+    h1{ letter-spacing: -0.5px; }
+  }
+
   @media (prefers-reduced-motion: reduce){
     .wheel{ transition: none; }
     .result-badge.show{ animation: none !important; opacity: 1; transform: translate(-50%, -50%) scale(1); }
@@ -493,11 +557,16 @@
 <body>
 
   <nav>
-    <a class="brand" href="index.html">🥢 My <em>Little Tools</em></a>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="meals-spinner.html" class="active">Meals Spinner</a></li>
-    </ul>
+    <div class="nav-inner">
+      <a class="brand" href="index.html">🥢 My <em>Little Tools</em></a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="meals-spinner.html" class="active">Meals Spinner</a></li>
+      </ul>
+    </div>
   </nav>
 
   <div class="eyebrow">Petaling Jaya · Hawker Food</div>
@@ -649,6 +718,14 @@
     renderItemsList();
   }
 
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  navToggle.addEventListener('click', () => {
+    const isOpen = navLinks.classList.toggle('open');
+    navToggle.classList.toggle('open', isOpen);
+    navToggle.setAttribute('aria-expanded', isOpen);
+  });
+
   editorToggle.addEventListener('click', () => {
     const isOpen = !editor.hidden;
     editor.hidden = isOpen;
@@ -739,6 +816,14 @@
 
   renderWheel();
   renderItemsList();
+
+  // re-measure label sizing when the viewport changes, so text stays
+  // proportional to the wheel instead of freezing at the load-time size
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(renderWheel, 150);
+  });
 </script>
 
 </body>
