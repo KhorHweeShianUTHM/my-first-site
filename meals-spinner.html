@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>今天吃什么 · 转盘</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;900&family=Zhi+Mang+Xing&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+
+  :root{
+    --bg: #1c1815;
+    --bg-2: #241f1a;
+    --amber: #e8a33d;
+    --red: #c1443d;
+    --cream: #f5ede0;
+    --teal: #3d6e67;
+    --wood: #4a3626;
+    --wood-light: #6b4d34;
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+
+  html, body{
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'Noto Sans SC', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding: 32px 20px 60px;
+    position: relative;
+  }
+
+  /* ambient lantern glow */
+  body::before{
+    content:'';
+    position: fixed;
+    top: -20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 900px;
+    height: 900px;
+    background: radial-gradient(circle, rgba(232,163,61,0.14) 0%, rgba(232,163,61,0) 65%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .eyebrow{
+    font-family: 'Zhi Mang Xing', cursive;
+    color: var(--amber);
+    font-size: 22px;
+    letter-spacing: 2px;
+    opacity: 0.9;
+    margin-bottom: 4px;
+    z-index: 1;
+  }
+
+  h1{
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 900;
+    font-size: clamp(32px, 8vw, 48px);
+    letter-spacing: 4px;
+    color: var(--cream);
+    text-shadow: 0 0 24px rgba(232,163,61,0.25);
+    margin-bottom: 6px;
+    z-index: 1;
+  }
+
+  .sub{
+    color: #a99a86;
+    font-size: 14px;
+    margin-bottom: 36px;
+    z-index: 1;
+  }
+
+  /* ---- Turntable ---- */
+  .stage{
+    position: relative;
+    width: min(340px, 82vw);
+    aspect-ratio: 1/1;
+    margin-bottom: 28px;
+    z-index: 1;
+  }
+
+  .pointer{
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0; height: 0;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-top: 26px solid var(--red);
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+    z-index: 5;
+  }
+  .pointer::after{
+    content:'';
+    position:absolute;
+    top: -30px; left: -3px;
+    width: 6px; height: 18px;
+    background: var(--wood-light);
+    border-radius: 2px;
+  }
+
+  .wheel-rim{
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 30% 25%, rgba(255,255,255,0.08), transparent 40%),
+      var(--wood);
+    padding: 14px;
+    box-shadow:
+      0 18px 40px rgba(0,0,0,0.55),
+      inset 0 0 0 3px rgba(0,0,0,0.25);
+  }
+
+  .wheel{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 4px rgba(0,0,0,0.3), inset 0 0 30px rgba(0,0,0,0.35);
+    transition: transform 4.2s cubic-bezier(0.12, 0.72, 0.11, 1);
+    will-change: transform;
+  }
+
+  .wheel-label{
+    position: absolute;
+    top: 0; left: 50%;
+    width: 50%;
+    height: 50%;
+    transform-origin: 0% 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 14%;
+    pointer-events: none;
+  }
+
+  .wheel-label span{
+    display: inline-block;
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--cream);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.45);
+    white-space: nowrap;
+    max-width: 96px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .hub{
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #f0c878, var(--amber) 60%, #a06d1f 100%);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.5), inset 0 0 0 2px rgba(0,0,0,0.2);
+    z-index: 4;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size: 20px;
+  }
+
+  .spin-btn{
+    z-index: 1;
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 3px;
+    color: var(--bg);
+    background: linear-gradient(180deg, #f0b754, var(--amber));
+    border: none;
+    padding: 14px 40px;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(232,163,61,0.35), inset 0 -3px 0 rgba(0,0,0,0.15);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .spin-btn:hover{ transform: translateY(-2px); box-shadow: 0 12px 24px rgba(232,163,61,0.45); }
+  .spin-btn:active{ transform: translateY(1px) scale(0.98); }
+  .spin-btn:disabled{ opacity: 0.5; cursor: not-allowed; transform:none; }
+
+  /* result ticket */
+  .result{
+    z-index:1;
+    margin-top: 22px;
+    min-height: 64px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .ticket{
+    background: var(--cream);
+    color: var(--bg);
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 900;
+    font-size: 22px;
+    padding: 14px 28px;
+    border-radius: 6px;
+    position: relative;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.4);
+    opacity: 0;
+    transform: translateY(8px) scale(0.95);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .ticket.show{ opacity: 1; transform: translateY(0) scale(1); }
+  .ticket::before, .ticket::after{
+    content:'';
+    position:absolute;
+    top:50%; transform: translateY(-50%);
+    width: 14px; height: 14px;
+    background: var(--bg);
+    border-radius: 50%;
+  }
+  .ticket::before{ left: -7px; }
+  .ticket::after{ right: -7px; }
+
+  /* editable list */
+  .editor{
+    z-index:1;
+    margin-top: 40px;
+    width: min(420px, 90vw);
+    background: var(--bg-2);
+    border: 1px solid rgba(232,163,61,0.18);
+    border-radius: 14px;
+    padding: 18px 20px 20px;
+  }
+  .editor h2{
+    font-family: 'Noto Serif SC', serif;
+    font-size: 15px;
+    color: var(--amber);
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+  .items{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .chip{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background: rgba(232,163,61,0.1);
+    border: 1px solid rgba(232,163,61,0.25);
+    color: var(--cream);
+    padding: 6px 8px 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+  }
+  .chip button{
+    background:none; border:none; color:#a99a86;
+    cursor:pointer; font-size: 15px; line-height:1;
+    padding: 2px 4px;
+  }
+  .chip button:hover{ color: var(--red); }
+
+  .add-row{
+    display:flex;
+    gap: 8px;
+  }
+  .add-row input{
+    flex:1;
+    background: var(--bg);
+    border: 1px solid rgba(232,163,61,0.25);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--cream);
+    font-size: 14px;
+    font-family: inherit;
+  }
+  .add-row input::placeholder{ color: #6b5f4f; }
+  .add-row input:focus{ outline: none; border-color: var(--amber); }
+  .add-row button{
+    background: var(--teal);
+    border:none;
+    color: var(--cream);
+    padding: 0 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor:pointer;
+    font-weight: 500;
+  }
+  .add-row button:hover{ filter: brightness(1.1); }
+
+  @media (prefers-reduced-motion: reduce){
+    .wheel{ transition: none; }
+    .ticket{ transition: opacity 0.2s; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="eyebrow">深夜食堂 · 选择困难症终结者</div>
+  <h1>今天吃什么</h1>
+  <div class="sub">转一下,交给命运决定</div>
+
+  <div class="stage">
+    <div class="pointer"></div>
+    <div class="wheel-rim">
+      <div class="wheel" id="wheel"></div>
+    </div>
+    <div class="hub">🥢</div>
+  </div>
+
+  <button class="spin-btn" id="spinBtn">转 起 来</button>
+
+  <div class="result">
+    <div class="ticket" id="ticket"></div>
+  </div>
+
+  <div class="editor">
+    <h2>菜单 · 点击 × 可删除</h2>
+    <div class="items" id="itemsList"></div>
+    <div class="add-row">
+      <input type="text" id="newItem" placeholder="加一个菜,比如 麻辣烫" maxlength="12">
+      <button id="addBtn">添加</button>
+    </div>
+  </div>
+
+<script>
+  const palette = ['#c1443d', '#e8a33d', '#3d6e67', '#8a5a3d', '#a6713d', '#5c4a3d', '#b5622f', '#4d6b5c'];
+
+  let foods = ['火锅', '烤肉', '兰州拉面', '沙县小吃', '螺蛳粉', '寿司', '黄焖鸡米饭', '麻辣香锅'];
+
+  const wheel = document.getElementById('wheel');
+  const spinBtn = document.getElementById('spinBtn');
+  const ticket = document.getElementById('ticket');
+  const itemsList = document.getElementById('itemsList');
+  const newItemInput = document.getElementById('newItem');
+  const addBtn = document.getElementById('addBtn');
+
+  let currentRotation = 0;
+  let spinning = false;
+
+  function renderWheel(){
+    const n = foods.length;
+    if(n === 0){
+      wheel.style.background = '#3a332b';
+      wheel.innerHTML = '';
+      return;
+    }
+    const slice = 360 / n;
+    const gradientParts = foods.map((_, i) => {
+      const color = palette[i % palette.length];
+      const start = i * slice;
+      const end = start + slice;
+      return `${color} ${start}deg ${end}deg`;
+    });
+    wheel.style.background = `conic-gradient(${gradientParts.join(', ')})`;
+
+    wheel.innerHTML = '';
+    foods.forEach((food, i) => {
+      const labelWrap = document.createElement('div');
+      labelWrap.className = 'wheel-label';
+      const angle = slice * i + slice / 2;
+      labelWrap.style.transform = `rotate(${angle}deg)`;
+      const span = document.createElement('span');
+      span.textContent = food;
+      labelWrap.appendChild(span);
+      wheel.appendChild(labelWrap);
+    });
+  }
+
+  function renderItemsList(){
+    itemsList.innerHTML = '';
+    foods.forEach((food, i) => {
+      const chip = document.createElement('div');
+      chip.className = 'chip';
+      const label = document.createElement('span');
+      label.textContent = food;
+      const removeBtn = document.createElement('button');
+      removeBtn.textContent = '×';
+      removeBtn.onclick = () => {
+        foods.splice(i, 1);
+        renderWheel();
+        renderItemsList();
+      };
+      chip.appendChild(label);
+      chip.appendChild(removeBtn);
+      itemsList.appendChild(chip);
+    });
+  }
+
+  function addFood(){
+    const val = newItemInput.value.trim();
+    if(!val) return;
+    if(foods.length >= 16){
+      newItemInput.value = '';
+      newItemInput.placeholder = '最多16个,删几个再加吧';
+      return;
+    }
+    foods.push(val);
+    newItemInput.value = '';
+    renderWheel();
+    renderItemsList();
+  }
+
+  addBtn.addEventListener('click', addFood);
+  newItemInput.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') addFood();
+  });
+
+  spinBtn.addEventListener('click', () => {
+    if(spinning || foods.length === 0) return;
+    spinning = true;
+    spinBtn.disabled = true;
+    ticket.classList.remove('show');
+
+    const n = foods.length;
+    const slice = 360 / n;
+
+    const winnerIndex = Math.floor(Math.random() * n);
+
+    // pointer is at top (0deg / 12 o'clock). Wheel's slice i spans [i*slice, (i+1)*slice) starting from 0deg (3 o'clock direction due to conic-gradient default start).
+    // conic-gradient starts at top (0deg = 12 o'clock) by default actually starts at 0deg = top. We'll align math accordingly:
+    // slice i center angle = i*slice + slice/2, measured clockwise from top.
+    const sliceCenter = winnerIndex * slice + slice / 2;
+
+    // We want sliceCenter to end up at 0deg (top, under pointer) after rotation.
+    // final wheel rotation R such that (sliceCenter + R) mod 360 == 0
+    const extraSpins = 5 + Math.floor(Math.random() * 3); // 5-7 full spins
+    const targetMod = (360 - sliceCenter) % 360;
+    const currentMod = currentRotation % 360;
+    let delta = targetMod - currentMod;
+    if(delta < 0) delta += 360;
+    const totalRotation = currentRotation + delta + extraSpins * 360;
+
+    currentRotation = totalRotation;
+    wheel.style.transform = `rotate(${totalRotation}deg)`;
+
+    setTimeout(() => {
+      spinning = false;
+      spinBtn.disabled = false;
+      ticket.textContent = `就吃 ${foods[winnerIndex]} 🎉`;
+      ticket.classList.add('show');
+    }, 4300);
+  });
+
+  renderWheel();
+  renderItemsList();
+</script>
+
+</body>
+</html>
