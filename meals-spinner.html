@@ -202,7 +202,7 @@
   /* ---- Turntable ---- */
   .stage{
     position: relative;
-    width: min(520px, 88vw, 46vh);
+    width: min(560px, 88vw, 74vh);
     aspect-ratio: 1/1;
     margin-bottom: 32px;
     filter: drop-shadow(0 24px 48px var(--shadow));
@@ -269,18 +269,14 @@
 
   .wheel-label{
     position: absolute;
-    top: 0; left: 50%;
-    width: 50%;
-    height: 50%;
-    transform-origin: 0% 100%;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding-right: 11%;
+    top: 50%; left: 50%;
     pointer-events: none;
   }
 
   .wheel-label span{
+    position: absolute;
+    top: 0;
+    left: 0;
     display: block;
     font-family: 'Outfit', sans-serif;
     font-weight: 700;
@@ -385,14 +381,16 @@
     animation: badgePop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   }
   .result-badge.hide{
-    transition: opacity 0.5s ease, transform 0.5s ease;
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.85);
+    animation: badgeDismiss 0.5s cubic-bezier(0.4, 0, 0.7, 0.4) forwards;
   }
   @keyframes badgePop{
     0%{ opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
     60%{ opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
     100%{ opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+  @keyframes badgeDismiss{
+    0%{ opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+    100%{ opacity: 0; transform: translate(-50%, -62%) scale(0.55) rotate(-6deg); }
   }
   .result-badge span{
     font-family: 'Fraunces', serif;
@@ -523,6 +521,7 @@
   }
 
   @media (max-width: 600px){
+    .stage{ width: min(88vw, 52vh); }
     .nav-inner{ justify-content: space-between; flex-wrap: wrap; }
     .nav-toggle{ display: flex; }
     .nav-links{
@@ -550,6 +549,7 @@
   @media (prefers-reduced-motion: reduce){
     .wheel{ transition: none; }
     .result-badge.show{ animation: none !important; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    .result-badge.hide{ animation: none !important; opacity: 0; transform: translate(-50%, -50%) scale(1); }
     .wheel-rim.spinning{ animation: none; }
   }
 </style>
@@ -630,10 +630,11 @@
   function wheelLabelStyle(n){
     const wheelPx = wheel.getBoundingClientRect().width || 360;
     const sliceDeg = 360 / n;
-    const arcPx = Math.PI * wheelPx * 0.72 * (sliceDeg / 360);
+    const radiusPx = (wheelPx / 2) * 0.62;
+    const arcPx = 2 * Math.PI * radiusPx * (sliceDeg / 360);
     const fontSize = Math.max(7, Math.min(10, Math.floor(arcPx / 4.2)));
     const maxWidth = Math.max(28, Math.floor(arcPx * 0.92));
-    return { fontSize, maxWidth, sliceDeg, arcPx };
+    return { fontSize, maxWidth, sliceDeg, arcPx, radiusPx };
   }
 
   function formatWheelText(name){
@@ -665,13 +666,16 @@
       const labelWrap = document.createElement('div');
       labelWrap.className = 'wheel-label';
       const angle = slice * i + slice / 2;
-      labelWrap.style.transform = `rotate(${angle}deg)`;
+      // rotate around the wheel's center, then push outward along the
+      // (now-rotated) radius — this lands exactly on the slice's true
+      // center angle, matching the gradient math exactly (no baked-in offset)
+      labelWrap.style.transform = `rotate(${angle}deg) translateY(-${style.radiusPx}px)`;
 
       const span = document.createElement('span');
       span.textContent = formatWheelText(food);
       span.style.fontSize = style.fontSize + 'px';
       span.style.maxWidth = style.maxWidth + 'px';
-      span.style.transform = `rotate(${-angle}deg)`;
+      span.style.transform = `translate(-50%, -50%) rotate(${-angle}deg)`;
       span.style.color = '#ffffff';
       span.style.textShadow = '0 1px 2px rgba(0,0,0,0.5)';
       labelWrap.appendChild(span);
