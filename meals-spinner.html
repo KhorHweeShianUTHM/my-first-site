@@ -222,6 +222,15 @@
     will-change: transform;
   }
 
+  /* subtle pulse while spinning */
+  .wheel-rim.spinning{
+    animation: rimPulse 0.9s ease-in-out infinite;
+  }
+  @keyframes rimPulse{
+    0%, 100%{ box-shadow: 0 0 0 4px var(--paper), 0 0 0 6px var(--line), inset 0 2px 8px rgba(255,255,255,0.4); }
+    50%{ box-shadow: 0 0 0 4px var(--paper), 0 0 0 9px var(--gold), inset 0 2px 8px rgba(255,255,255,0.4); }
+  }
+
   .wheel-label{
     position: absolute;
     top: 0; left: 50%;
@@ -229,112 +238,142 @@
     height: 50%;
     transform-origin: 0% 100%;
     display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding-top: 16%;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 11%;
     pointer-events: none;
   }
 
   .wheel-label span{
-    display: inline-block;
+    display: block;
     font-family: 'Outfit', sans-serif;
     font-weight: 700;
-    font-size: clamp(8px, 2.2vw, 10px);
-    line-height: 1.15;
+    line-height: 1.2;
     text-align: center;
-    max-width: 72px;
-    word-break: break-word;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    white-space: pre-line;
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: none;
   }
 
   .hub{
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    width: 58px; height: 58px;
+    width: 68px; height: 68px;
     border-radius: 50%;
     background: linear-gradient(145deg, #fff 0%, var(--cream) 100%);
     box-shadow:
       0 0 0 4px var(--paper),
       0 0 0 6px var(--accent),
       0 4px 12px var(--shadow);
-    z-index: 4;
+    z-index: 5;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size: 22px;
-  }
-
-  .spin-btn{
-    font-family: 'Outfit', sans-serif;
-    font-weight: 700;
-    font-size: 15px;
-    letter-spacing: 4px;
-    color: var(--paper);
-    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
-    border: none;
-    padding: 16px 48px;
-    border-radius: 999px;
+    font-size: 24px;
+    font-family: inherit;
     cursor: pointer;
-    box-shadow:
-      0 4px 0 var(--accent-dark),
-      0 8px 24px rgba(232, 93, 4, 0.35);
+    border: none;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
-  .spin-btn:hover{
-    transform: translateY(-2px);
+  .hub:hover{
+    transform: translate(-50%, -50%) scale(1.08);
     box-shadow:
-      0 6px 0 var(--accent-dark),
-      0 12px 28px rgba(232, 93, 4, 0.4);
+      0 0 0 4px var(--paper),
+      0 0 0 8px var(--gold),
+      0 4px 16px var(--shadow);
   }
-  .spin-btn:active{
-    transform: translateY(3px);
-    box-shadow:
-      0 1px 0 var(--accent-dark),
-      0 4px 12px rgba(232, 93, 4, 0.3);
+  .hub:active{
+    transform: translate(-50%, -50%) scale(0.96);
   }
-  .spin-btn:disabled{
-    opacity: 0.5;
+  .hub:disabled{
     cursor: not-allowed;
-    transform: none;
-    box-shadow: 0 4px 0 var(--accent-dark);
   }
 
-  .result{
-    margin-top: 28px;
-    min-height: 80px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+  .hint{
+    margin-top: 4px;
+    margin-bottom: 6px;
+    font-size: 12.5px;
+    color: var(--mute);
+    letter-spacing: 0.5px;
   }
-  .ticket{
+
+  .editor-toggle{
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent-dark);
+    background: var(--cream);
+    border: 1px solid var(--line);
+    padding: 8px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    margin-bottom: 8px;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  }
+  .editor-toggle:hover{
+    border-color: var(--gold);
+    transform: translateY(-1px);
+  }
+  .editor-toggle.open{
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  /* ---- result badge, shown centered over the wheel ---- */
+  .result-badge{
+    position: absolute;
+    top: 50%; left: 50%;
+    width: min(220px, 60%);
+    min-height: 90px;
+    border-radius: 50%;
     background: var(--paper);
-    color: var(--ink);
+    border: 3px solid var(--accent);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.28);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 12px 14px;
+    z-index: 8;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3);
+  }
+  .result-badge.show{
+    animation: badgePop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  .result-badge.hide{
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.85);
+  }
+  @keyframes badgePop{
+    0%{ opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+    60%{ opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+    100%{ opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+  .result-badge span{
     font-family: 'Fraunces', serif;
     font-weight: 900;
-    font-size: clamp(17px, 4.2vw, 22px);
-    padding: 16px 36px;
-    border: 2px dashed var(--accent);
-    border-radius: 12px;
-    position: relative;
+    font-size: clamp(14px, 3.6vw, 17px);
+    line-height: 1.3;
+    color: var(--ink);
+  }
+
+  /* confetti pieces */
+  .confetti-piece{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    pointer-events: none;
     opacity: 0;
-    transform: translateY(12px) scale(0.92);
-    transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-    box-shadow: 0 8px 24px var(--shadow);
-    text-align: center;
-    line-height: 1.35;
+    z-index: 20;
   }
-  .ticket.show{ opacity: 1; transform: translateY(0) scale(1); }
-  .ticket::before, .ticket::after{
-    content:'🍽';
-    position:absolute;
-    top:50%;
-    transform: translateY(-50%);
-    font-size: 16px;
-    opacity: 0.7;
-  }
-  .ticket::before{ left: 10px; }
-  .ticket::after{ right: 10px; }
 
   .editor{
     margin-top: 48px;
@@ -446,7 +485,8 @@
 
   @media (prefers-reduced-motion: reduce){
     .wheel{ transition: none; }
-    .ticket{ transition: opacity 0.2s; }
+    .result-badge.show{ animation: none !important; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    .wheel-rim.spinning{ animation: none; }
   }
 </style>
 </head>
@@ -464,21 +504,20 @@
   <h1>What's for <em>Dinner</em></h1>
   <div class="sub">Spin for noodles, rice, mamak, kopitiam &amp; pasar malam favourites around PJ</div>
 
-  <div class="stage">
+  <div class="stage" id="stage">
     <div class="pointer"></div>
-    <div class="wheel-rim">
+    <div class="wheel-rim" id="wheelRim">
       <div class="wheel" id="wheel"></div>
     </div>
-    <div class="hub">🥢</div>
+    <button class="hub" id="hub" aria-label="Spin the wheel">🥢</button>
+    <div class="result-badge" id="resultBadge"><span id="resultText"></span></div>
   </div>
 
-  <button class="spin-btn" id="spinBtn">S P I N</button>
+  <div class="hint">Tap the center to spin</div>
 
-  <div class="result">
-    <div class="ticket" id="ticket"></div>
-  </div>
+  <button class="editor-toggle" id="editorToggle">✎ Edit menu</button>
 
-  <div class="editor">
+  <div class="editor" id="editor" hidden>
     <h2>PJ Menu · Tap × to remove</h2>
     <div class="items" id="itemsList"></div>
     <div class="add-row">
@@ -504,21 +543,35 @@
   ];
 
   const wheel = document.getElementById('wheel');
-  const spinBtn = document.getElementById('spinBtn');
-  const ticket = document.getElementById('ticket');
+  const wheelRim = document.getElementById('wheelRim');
+  const stage = document.getElementById('stage');
+  const hub = document.getElementById('hub');
+  const resultBadge = document.getElementById('resultBadge');
+  const resultText = document.getElementById('resultText');
   const itemsList = document.getElementById('itemsList');
   const newItemInput = document.getElementById('newItem');
   const addBtn = document.getElementById('addBtn');
+  const editor = document.getElementById('editor');
+  const editorToggle = document.getElementById('editorToggle');
 
   let currentRotation = 0;
   let spinning = false;
+  let autoHideTimer = null;
 
-  function textColorForBg(hex){
-    const r = parseInt(hex.slice(1,3), 16);
-    const g = parseInt(hex.slice(3,5), 16);
-    const b = parseInt(hex.slice(5,7), 16);
-    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    return luminance > 0.55 ? '#2c1810' : '#ffffff';
+  function wheelLabelStyle(n){
+    const wheelPx = wheel.getBoundingClientRect().width || 360;
+    const sliceDeg = 360 / n;
+    const arcPx = Math.PI * wheelPx * 0.72 * (sliceDeg / 360);
+    const fontSize = Math.max(7, Math.min(10, Math.floor(arcPx / 4.2)));
+    const maxWidth = Math.max(28, Math.floor(arcPx * 0.92));
+    return { fontSize, maxWidth, sliceDeg, arcPx };
+  }
+
+  function formatWheelText(name){
+    const words = name.trim().split(/\s+/);
+    if(words.length <= 2) return name;
+    const mid = Math.ceil(words.length / 2);
+    return words.slice(0, mid).join(' ') + '\n' + words.slice(mid).join(' ');
   }
 
   function renderWheel(){
@@ -538,6 +591,7 @@
     wheel.style.background = `conic-gradient(${gradientParts.join(', ')})`;
 
     wheel.innerHTML = '';
+    const style = wheelLabelStyle(n);
     foods.forEach((food, i) => {
       const labelWrap = document.createElement('div');
       labelWrap.className = 'wheel-label';
@@ -545,9 +599,12 @@
       labelWrap.style.transform = `rotate(${angle}deg)`;
 
       const span = document.createElement('span');
-      span.textContent = food;
+      span.textContent = formatWheelText(food);
+      span.style.fontSize = style.fontSize + 'px';
+      span.style.maxWidth = style.maxWidth + 'px';
       span.style.transform = `rotate(${-angle}deg)`;
-      span.style.color = textColorForBg(palette[i % palette.length]);
+      span.style.color = '#ffffff';
+      span.style.textShadow = '0 1px 2px rgba(0,0,0,0.5)';
       labelWrap.appendChild(span);
       wheel.appendChild(labelWrap);
     });
@@ -592,16 +649,63 @@
     renderItemsList();
   }
 
+  editorToggle.addEventListener('click', () => {
+    const isOpen = !editor.hidden;
+    editor.hidden = isOpen;
+    editorToggle.classList.toggle('open', !isOpen);
+    editorToggle.textContent = isOpen ? '✎ Edit menu' : '✕ Close menu';
+  });
+
   addBtn.addEventListener('click', addFood);
   newItemInput.addEventListener('keydown', (e) => {
     if(e.key === 'Enter') addFood();
   });
 
-  spinBtn.addEventListener('click', () => {
+  // ---- confetti burst on result ----
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const confettiColors = ['#e85d04', '#f4a261', '#2a9d8f', '#e9c46a', '#8338ec', '#ff006e'];
+
+  function burstConfetti(){
+    if(reduceMotion) return;
+    const count = 26;
+    for(let i = 0; i < count; i++){
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      const color = confettiColors[i % confettiColors.length];
+      const isCircle = Math.random() > 0.5;
+      piece.style.background = color;
+      piece.style.borderRadius = isCircle ? '50%' : '2px';
+      piece.style.width = piece.style.height = (5 + Math.random() * 5) + 'px';
+
+      const angle = Math.random() * Math.PI * 2;
+      const distance = 70 + Math.random() * 90;
+      const dx = Math.cos(angle) * distance;
+      const dy = Math.sin(angle) * distance - 40; // bias upward
+      const rot = (Math.random() * 720 - 360) + 'deg';
+      const duration = 700 + Math.random() * 500;
+
+      stage.appendChild(piece);
+
+      piece.animate([
+        { transform: 'translate(-50%, -50%) translate(0, 0) rotate(0deg)', opacity: 1 },
+        { transform: `translate(-50%, -50%) translate(${dx * 0.6}px, ${dy}px) rotate(${rot})`, opacity: 1, offset: 0.65 },
+        { transform: `translate(-50%, -50%) translate(${dx}px, ${dy + 90}px) rotate(${rot})`, opacity: 0 }
+      ], {
+        duration,
+        easing: 'cubic-bezier(0.2, 0.8, 0.3, 1)'
+      });
+
+      setTimeout(() => piece.remove(), duration + 50);
+    }
+  }
+
+  hub.addEventListener('click', () => {
     if(spinning || foods.length === 0) return;
     spinning = true;
-    spinBtn.disabled = true;
-    ticket.classList.remove('show');
+    hub.disabled = true;
+    clearTimeout(autoHideTimer);
+    resultBadge.classList.remove('show', 'hide');
+    wheelRim.classList.add('spinning');
 
     const n = foods.length;
     const slice = 360 / n;
@@ -621,9 +725,15 @@
 
     setTimeout(() => {
       spinning = false;
-      spinBtn.disabled = false;
-      ticket.textContent = `It's ${foods[winnerIndex]} tonight!`;
-      ticket.classList.add('show');
+      hub.disabled = false;
+      wheelRim.classList.remove('spinning');
+      resultText.textContent = foods[winnerIndex];
+      resultBadge.classList.add('show');
+      burstConfetti();
+
+      autoHideTimer = setTimeout(() => {
+        resultBadge.classList.add('hide');
+      }, 3800);
     }, 4300);
   });
 
